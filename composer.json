@@ -1,0 +1,36 @@
+{
+	"name": "gaesi/cert",
+	"description": "Gaesi Cert lib.",
+	"minimum-stability": "dev",
+	"license": "MIT",
+	"keywords": [
+		"gaesi",
+		"certificate",
+		"cert"
+	],
+	"authors": [
+		{
+			"name": "Gaesi/USP",
+			"email": "vidal_melo@pea.usp.br"
+		}
+	],
+	"repositories": [
+        {
+            "type": "vcs",
+            "url": "/Users/anderson/workspace/backend/gaesi/validator"
+        }
+    ],
+	"require": {
+		"php": "^7.2.5",
+		"phpseclib/phpseclib": "~2.0",
+		"gaesi/validator": "^0.1"
+	},
+	"require-dev": {
+		"phpunit/phpunit": "^8.5"
+	},
+	"autoload": {
+		"psr-4": {
+			"Gaesi\\Cert\\": "src/"  
+		}
+	}
+}
