@@ -4,8 +4,8 @@ namespace Gaesi\Cert\IcpBrasil;
 
 use Exception;
 use Gaesi\Cert\IcpBrasil\IcpBrasilCertificate;
-use Gaesi\Validators\CNPJ;
-use Gaesi\Validators\CPF;
+use Gaesi\Validator\CNPJ;
+use Gaesi\Validator\CPF;
 use phpseclib\File\X509;
 
 
@@ -35,7 +35,7 @@ class IcpBrasilParser
     {
         try{
             $this->loadCert($x509);
-            $this->parseCommonName();
+            $this->parseSubjectDN();
             $this->parseSANs();
             $this->parseSanOids();
         }catch(Exception $e){
@@ -74,13 +74,17 @@ class IcpBrasilParser
         $this->icpBrasilCert->setX509($x509);
     }
 
-    private function parseCommonName()
+    private function parseSubjectDN()
     {
-        $cn = $this->x509->getDNProp('id-at-commonName');
+        $dname = $this->x509->getDN(X509::DN_STRING);
+        $this->icpBrasilCert->subjectDName = $dname;
+
+        $cn = $this->x509->getDNProp('cn');
         if (!empty($cn) && isset($cn[0]))
-            $cn = $cn[0];
-        $name = explode('=', $cn[0]);
+            $cn = explode(':', $cn[0]);
+        $name = $cn[0];
         $identifier = $cn[1];
+        $this->icpBrasilCert->name = $name;
         $this->icpBrasilCert->cnIdentifier = $identifier;
         if (CPF::validate($identifier)) {
             $this->icpBrasilCert->cpf = $identifier;
@@ -98,7 +102,7 @@ class IcpBrasilParser
         foreach ($san as $item) {
             if ( isset($item['otherName']) && isset($item['otherName']['type-id']) ){
                 $value = base64_decode($item['otherName']['value']['octetString']);
-                $oids[] = [$item['otherName']['type-id'] => $value];
+                $oids[$item['otherName']['type-id']] = $value;
             }
         }
         $this->icpBrasilCert->setSanOids($oids);
