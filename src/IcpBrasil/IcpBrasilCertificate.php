@@ -43,13 +43,13 @@ class IcpBrasilCertificate extends IcpBrasilParser
      */
     public ?string $cnpj = null;
 
-    public function parseSSL(): IcpBrasilCertificate
+    public function parseSSL(): ?IcpBrasilCertificate
     {
         parent::setInstance($this);
         return  parent::parseSSL();
     }
 
-    public function parseX509(string $x509 = null): IcpBrasilCertificate
+    public function parseX509(string $x509 = null): ?IcpBrasilCertificate
     {
         parent::setInstance($this);
         return  parent::parseX509($x509);

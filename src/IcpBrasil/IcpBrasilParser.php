@@ -4,6 +4,8 @@ namespace Gaesi\Cert\IcpBrasil;
 
 use Exception;
 use Gaesi\Cert\IcpBrasil\IcpBrasilCertificate;
+use Gaesi\Validators\CNPJ;
+use Gaesi\Validators\CPF;
 use phpseclib\File\X509;
 
 
@@ -17,7 +19,7 @@ class IcpBrasilParser
         $this->icpBrasilCert = $icpBrasilCert;
     }
     
-    public function parseSSL(): IcpBrasilCertificate
+    public function parseSSL(): ?IcpBrasilCertificate
     {
         return $this->parseX509();
     }
@@ -29,12 +31,13 @@ class IcpBrasilParser
      * 
      * @return mixed Retorna uma instância de IcpBrasilCertificate ou null em caso de erro.
      */
-    public function parseX509(string $x509 = null): IcpBrasilCertificate
+    public function parseX509(string $x509 = null): ?IcpBrasilCertificate
     {
         try{
             $this->loadCert($x509);
             $this->parseCommonName();
             $this->parseSANs();
+            $this->parseSanOids();
         }catch(Exception $e){
             $this->icpBrasilCert = null;
         }
@@ -73,25 +76,24 @@ class IcpBrasilParser
 
     private function parseCommonName()
     {
-        if (isset($_SERVER['SSL_CLIENT_S_DN_CN'])) {
-            $SSL_CLIENT_S_DN_CN = $_SERVER['SSL_CLIENT_S_DN_CN'];
-        } else if (isset($_SERVER['HTTP_X_SSL_S_DN'])) {
-            $dn = explode(',', $_SERVER['HTTP_X_SSL_S_DN']);
-            $rdn = explode('=', $dn[0]); // assumindo que CN seja o primeiro
-            $SSL_CLIENT_S_DN_CN = $rdn[1];
-        } else {
-            if (!isset($_SESSION)) {
-                session_start();
-            }
-            $SSL_CLIENT_S_DN_CN = $_SESSION['SSL_CLIENT_S_DN_CN'];
+        $cn = $this->x509->getDNProp('id-at-commonName');
+        if (!empty($cn) && isset($cn[0]))
+            $cn = $cn[0];
+        $name = explode('=', $cn[0]);
+        $identifier = $cn[1];
+        $this->icpBrasilCert->cnIdentifier = $identifier;
+        if (CPF::validate($identifier)) {
+            $this->icpBrasilCert->cpf = $identifier;
+        }else if( CNPJ::validate($identifier) ){
+            $this->icpBrasilCert->cnpj = $identifier;
         }
-        return $SSL_CLIENT_S_DN_CN;
-
     }
     
     private function parseSanOids(): void
     {
-        $san = $this->cert->getExtension('id-ce-subjectAltName');
+        $san = $this->x509->getExtension('id-ce-subjectAltName');
+        if (empty($san))
+            return;
         $oids = array();
         foreach ($san as $item) {
             if ( isset($item['otherName']) && isset($item['otherName']['type-id']) ){
@@ -104,7 +106,9 @@ class IcpBrasilParser
 
     private function parseSANs(): void
     {
-        $san = $this->cert->getExtension('id-ce-subjectAltName');
+        $san = $this->x509->getExtension('id-ce-subjectAltName');
+        if (empty($san))
+            return;
         foreach ($san as $item) {
             if ( isset($item['otherName']) && isset($item['otherName']['type-id']) ){
                 if ($item['otherName']['type-id'] == '2.16.76.1.3.1') {
