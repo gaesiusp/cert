@@ -22,6 +22,11 @@ class IcpBrasilCertificate extends IcpBrasilParser
      * @var string SubjectDName completo do Certificado
      */
     public ?string $subjectDName = null;
+
+    /**
+     * @var string CommonName do Certificado
+     */
+    public ?string $commonName = null;
     
     /**
      * @var string Nome presente no

@@ -18,7 +18,12 @@ class IcpBrasilParser
     {
         $this->icpBrasilCert = $icpBrasilCert;
     }
-    
+
+    /**
+     * Realiza o parse de um Certificado SSL e retorna uma instancia de IcpBrasilCertificate
+     * 
+     * @return mixed Retorna uma instância de IcpBrasilCertificate ou null em caso de erro.
+     */
     public function parseSSL(): ?IcpBrasilCertificate
     {
         return $this->parseX509();
@@ -44,6 +49,13 @@ class IcpBrasilParser
         return $this->icpBrasilCert;
     }
 
+    /**
+     * Método carrega o Certificado SSL client ou Certificado Informado por parâmetro
+     * 
+     * @param string $cert Certificado que será carregado, formato PEM. 
+     * Quando não informado o Certifica SSL é carregado.
+     * 
+     */
     private function loadCert($cert = null): void
     {
         if ($cert === null) {
@@ -80,6 +92,8 @@ class IcpBrasilParser
         $this->icpBrasilCert->subjectDName = $dname;
 
         $cn = $this->x509->getDNProp('cn');
+        $this->icpBrasilCert->commonName = $cn[0];
+
         if (!empty($cn) && isset($cn[0]))
             $cn = explode(':', $cn[0]);
         $name = $cn[0];
