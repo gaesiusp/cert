@@ -72,14 +72,14 @@ class IcpBrasilCertificate extends IcpBrasilParser
     }
 
     /**
-     * Método Verifica a existência de um OID especifico no Certificado.
-     * Somente os OIDs presentes no Subject Alternative Name
+     * Verifica se um OID especifico existe no Certificado ICPBrasil.
+     * Somente os OIDs presentes no Subject Alternative Name serão consultados
      * 
-     * @param string OID procurado. Ex.: 2.16.76.1.3.3
+     * @param string OID a ser procurado. Ex.: 2.16.76.1.3.3
      * 
      * @return mixed Retorna um array com o conteúdo do OID encontrado (oid => value), ou null caso não exista
      */
-    public function hasOid(string $oid)
+    public function oidExists(string $oid)
     {
         if (isset($this->oids) && isset($this->oids[$oid])) {
             return $this->oids[$oid];
