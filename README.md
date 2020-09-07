@@ -8,7 +8,7 @@ A PHP library for working with Certificates.
  ## Usage
 
 
- For load the SSL Certificate: 
+ For load the SSL Certificate ICPBrasil: 
  ```` php
  use Gaesi\Cert\IcpBrasil\IcpBrasilCertificate;
 
@@ -17,11 +17,11 @@ A PHP library for working with Certificates.
 
  echo $icp->cnpj;   // print the cnpj
  echo $icp->name;   // print the name of the CommonName
- echo $icp->hasOid('2.16.76.1.3.3'); // true
+ echo $icp->oidExists('2.16.76.1.3.3'); // true
 
  ````
 
- For load the Certificate from the text or file:
+ For load the Certificate ICPBrasil from the text or file:
  ```` php
  use Gaesi\Cert\IcpBrasil\IcpBrasilCertificate;
 
