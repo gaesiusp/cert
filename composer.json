@@ -17,7 +17,7 @@
 	"repositories": [
         {
             "type": "vcs",
-            "url": "/Users/anderson/workspace/backend/gaesi/validator"
+            "url": "http://10.10.13.105:7990/scm/plat/php-validator.git"
         }
     ],
 	"require": {
