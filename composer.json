@@ -32,5 +32,8 @@
 		"psr-4": {
 			"Gaesi\\Cert\\": "src/"  
 		}
+	},
+	"config":{
+		"secure-http": false
 	}
 }
