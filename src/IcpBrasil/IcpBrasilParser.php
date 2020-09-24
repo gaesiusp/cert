@@ -94,8 +94,10 @@ class IcpBrasilParser
         $cn = $this->x509->getDNProp('cn');
         $this->icpBrasilCert->commonName = $cn[0];
 
-        if (!empty($cn) && isset($cn[0]))
+        if (!empty($cn) && isset($cn[0]) && preg_match('/.+[\:]{1}.+/',$cn[0]))
             $cn = explode(':', $cn[0]);
+        else
+            return;
         $name = $cn[0];
         $identifier = $cn[1];
         $this->icpBrasilCert->name = $name;

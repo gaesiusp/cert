@@ -2,12 +2,18 @@
 
 namespace Gaesi\Cert\IcpBrasil;
 
+use Gaesi\Cert\CALoader;
 use Gaesi\Cert\IcpBrasil\IcpBrasilParser;
 use phpseclib\File\X509;
 
 
 class IcpBrasilCertificate extends IcpBrasilParser
 {
+    /**
+     * @var array Array com os Certificados ACs
+     */
+    private $CAs = null;
+
     /**
      * @var X509 Object representando o Certificado 
      */
@@ -85,5 +91,39 @@ class IcpBrasilCertificate extends IcpBrasilParser
             return $this->oids[$oid];
         }
         return null;
+    }
+
+    public function setChain(?array $CAs)
+    {
+        $this->CAs = $CAs;
+    }
+
+    public function validateChain(): bool
+    {
+        if (!empty($this->CAs) && !empty($this->x509) ){
+            foreach ($this->CAs as $c) {
+                $this->x509->loadCA($c);
+            }
+        }
+        return $this->x509->validateSignature();
+    }
+
+    public function validateICPBrasilChain(): bool
+    {
+        $loader = new CALoader();
+        $loader->addRepositoryPath(__DIR__ .  '/../Resources/icpBrasilRoots');
+        foreach ($loader->getCAs() as $c) {
+            $this->CAs[] = $c;
+        }
+        if ($this->validateChain()){
+            $root = $this->x509->getChain()[count($this->x509->getChain())-1];
+        }
+        if (isset($root) && 
+            preg_match('/Autoridade Certificadora Raiz Brasileira/', $root->getDN(true)['CN'])  && 
+            $root->getDN(true)['O'] === 'ICP-Brasil' && 
+            $root->getDN(true)['C'] === 'BR'){
+            return true;
+        }
+        return false;
     }
 }
