@@ -111,7 +111,7 @@ class IcpBrasilCertificate extends IcpBrasilParser
     public function validateICPBrasilChain(): bool
     {
         $loader = new CALoader();
-        $loader->addRepositoryPath(__DIR__ .  '/../Resources/icpBrasilRoots');
+        $loader->addRepositoryPath(__DIR__ .  '/../Resources/IcpBrasil/Roots');
         foreach ($loader->getCAs() as $c) {
             $this->CAs[] = $c;
         }
