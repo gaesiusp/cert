@@ -63,6 +63,8 @@ class IcpBrasilParser
                 $cert = urldecode($_SERVER['HTTP_X_SSL_CERT']);
             } else if (isset($_SERVER['SSL_CLIENT_CERT'])) {
                 $cert = urldecode($_SERVER['SSL_CLIENT_CERT']);
+            } else if (isset($_SERVER['HTTP_SSL_CLIENT_CERT'])) {
+                $cert = urldecode($_SERVER['HTTP_SSL_CLIENT_CERT']);
             } else {
                 if (!isset($_SESSION)) {
                     session_start();
