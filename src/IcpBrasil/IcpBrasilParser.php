@@ -17,6 +17,7 @@ class IcpBrasilParser
     private $certHeaders = [
         'HTTP_X_SSL_CERT',
         'SSL_CLIENT_CERT',
+        'X-SSL-CERT',
         'HTTP_SSL_CLIENT_CERT'];
     
     protected function setInstance(IcpBrasilCertificate $icpBrasilCert): void
