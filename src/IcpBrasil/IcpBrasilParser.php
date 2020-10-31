@@ -13,6 +13,11 @@ class IcpBrasilParser
 {
     private $x509 = null;
     private ?IcpBrasilCertificate $icpBrasilCert = null;
+
+    private $certHeaders = [
+        'HTTP_X_SSL_CERT',
+        'SSL_CLIENT_CERT',
+        'HTTP_SSL_CLIENT_CERT'];
     
     protected function setInstance(IcpBrasilCertificate $icpBrasilCert): void
     {
@@ -59,18 +64,7 @@ class IcpBrasilParser
     private function loadCert($cert = null): void
     {
         if ($cert === null) {
-            if (isset($_SERVER['HTTP_X_SSL_CERT'])) {
-                $cert = urldecode($_SERVER['HTTP_X_SSL_CERT']);
-            } else if (isset($_SERVER['SSL_CLIENT_CERT'])) {
-                $cert = urldecode($_SERVER['SSL_CLIENT_CERT']);
-            } else if (isset($_SERVER['HTTP_SSL_CLIENT_CERT'])) {
-                $cert = urldecode($_SERVER['HTTP_SSL_CLIENT_CERT']);
-            } else {
-                if (!isset($_SESSION)) {
-                    session_start();
-                }
-                $cert = $_SESSION['SSL_CLIENT_CERT'];
-            }
+            $cert = $this->parseCertHeaders();
             $x509 = new X509();
             if ($x509->loadX509($cert) === false){
                 return;
@@ -143,6 +137,36 @@ class IcpBrasilParser
                 }
             }
         }
+    }
+
+    /**
+     * Parse certificate in HTTP Header
+     */
+    private function parseCertHeaders(): string
+    {
+        $cert = "";
+        foreach ($this->certHeaders as $value) {
+            if (isset($_SERVER[$value])){
+                $cert = urldecode($_SERVER[$value]);
+            }
+        }
+        if (empty($cert)){
+            if (!isset($_SESSION)) {
+                session_start();
+            }
+            if (isset($_SESSION['SSL_CLIENT_CERT'])) 
+                $cert = $_SESSION['SSL_CLIENT_CERT'];
+        } else if (empty($cert)){
+            $headers = apache_request_headers();
+            foreach ($headers as $key => $value) {
+                foreach ($this->certHeaders as $cValue) {
+                    if (strtoupper($key) === strtoupper($cValue)){
+                        $cert = $value;
+                    }
+                }
+            }
+        }
+        return $cert;
     }
     
 }
