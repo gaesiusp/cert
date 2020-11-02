@@ -1,6 +1,6 @@
 {
 	"name": "gaesi/cert",
-	"description": "Gaesi Cert lib.",
+	"description": "Gaesi Cert library",
 	"minimum-stability": "dev",
 	"license": "MIT",
 	"keywords": [

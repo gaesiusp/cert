@@ -2,7 +2,6 @@
 
 namespace Gaesi\Cert\IcpBrasil;
 
-use Exception;
 use Gaesi\Cert\IcpBrasil\IcpBrasilCertificate;
 use Gaesi\Validator\CNPJ;
 use Gaesi\Validator\CPF;
@@ -49,7 +48,7 @@ class IcpBrasilParser
             $this->parseSubjectDN();
             $this->parseSANs();
             $this->parseSanOids();
-        }catch(Exception $e){
+        }catch(\Throwable $e){
             $this->icpBrasilCert = null;
         }
         return $this->icpBrasilCert;
@@ -152,22 +151,15 @@ class IcpBrasilParser
             }
         }
         if (empty($cert)){
-            if (!isset($_SESSION)) {
-                session_start();
-            }
-            if (isset($_SESSION['SSL_CLIENT_CERT'])) 
-                $cert = $_SESSION['SSL_CLIENT_CERT'];
-        } else if (empty($cert)){
             $headers = apache_request_headers();
             foreach ($headers as $key => $value) {
                 foreach ($this->certHeaders as $cValue) {
                     if (strtoupper($key) === strtoupper($cValue)){
-                        $cert = $value;
+                        return urldecode($value);
                     }
                 }
             }
         }
-        return $cert;
     }
     
 }
