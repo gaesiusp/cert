@@ -144,19 +144,16 @@ class IcpBrasilParser
      */
     private function parseCertHeaders(): string
     {
-        $cert = "";
         foreach ($this->certHeaders as $value) {
             if (isset($_SERVER[$value])){
-                $cert = urldecode($_SERVER[$value]);
+                return urldecode($_SERVER[$value]);
             }
         }
-        if (empty($cert)){
-            $headers = apache_request_headers();
-            foreach ($headers as $key => $value) {
-                foreach ($this->certHeaders as $cValue) {
-                    if (strtoupper($key) === strtoupper($cValue)){
-                        return urldecode($value);
-                    }
+        $headers = apache_request_headers();
+        foreach ($headers as $key => $value) {
+            foreach ($this->certHeaders as $cValue) {
+                if (strtoupper($key) === strtoupper($cValue)){
+                    return urldecode($value);
                 }
             }
         }
