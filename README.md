@@ -75,3 +75,6 @@ A PHP library for working with Certificates.
 
  https://www.gov.br/iti/pt-br/assuntos/repositorio/repositorio-ac-raiz
   
+ ## TODO
+  - parse others OIDs
+ https://github.com/demoiselle/signer/blob/5e7b54b429151d0d76d47363ead25addb1002abf/core/src/main/java/org/demoiselle/signer/core/extension/ICPBRCertificatePJ.java
