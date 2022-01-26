@@ -10,16 +10,10 @@
 	],
 	"authors": [
 		{
-			"name": "Gaesi/USP",
-			"email": "vidal_melo@pea.usp.br"
+			"name": "Gaesi USP",
+			"email": "vidal.melo@usp.br"
 		}
 	],
-	"repositories": [
-        {
-            "type": "vcs",
-            "url": "http://10.10.13.105:7990/scm/plat/php-validator.git"
-        }
-    ],
 	"require": {
 		"php": "^7.2.5",
 		"phpseclib/phpseclib": "~2.0",
